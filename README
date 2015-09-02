@@ -4,3 +4,24 @@ The Something Something IV&V Conformance Test Suite
 
 IV&V: Independent Verification and Validation
 
+Tests are one of three approaches:
+
+ - Assertions for each claim a standard makes.
+   Each test is qualified with a reference to the standard.
+
+   The idea is that for every sentence which mandates something,
+   that behaviour is explicitly tested by breaking that sentence
+   up into individual clauses and to assert on each in turn.
+
+ - Fuzzing: Random permutations of valid input.
+   Behaviour is compared against against a reference implementation.
+
+ - Regression tests of situations encountered in practice.
+   These typically involve behaviour between several items which
+   individual tests cannot find.
+
+   All regression tests provide a "workaround" to avoid that
+   problem in production.
+
+TODO: output data for reports in whatever format (probably TAP)
+

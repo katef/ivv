@@ -18,6 +18,7 @@ SUBDIR += tests/c89-common
 SUBDIR += tests/c89-hosted
 SUBDIR += tests/c89-library
 SUBDIR += tests/c89-regression
+SUBDIR += tests/c89-fuzz
 SUBDIR += tests/posix.1-2008
 #SUBDIR += tests/tdf
 

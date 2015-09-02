@@ -1,11 +1,8 @@
 # $Id$
 
-.include "Makefile.inc"
+.include "../../share/mk/top.mk"
 
-
-TESTS+=	4.1.5.c
-TESTS+=	4.11.5.6.c
-TESTS+=	4.11.6.3.c
-
-.include <tendra.ctest.mk>
+TEST += c89-library/4.1.5.c
+TEST += c89-library/4.11.5.6.c
+TEST += c89-library/4.11.6.3.c
 

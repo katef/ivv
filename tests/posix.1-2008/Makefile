@@ -1,11 +1,9 @@
 # $Id$
 
-.include "Makefile.inc"
+.include "../../share/mk/top.mk"
 
+# TODO: -Y${api} for tcc
+#API= posix
 
-API= posix
-
-TESTS+=	2.12.3.c
-
-.include <tendra.ctest.mk>
+TEST += posix.1-2008/2.12.3.c
 

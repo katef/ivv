@@ -1,11 +1,8 @@
 # $Id$
 
-.include "Makefile.inc"
+.include "../../share/mk/top.mk"
 
+TEST += tdf/plus-u.p
 
-TESTS+=	plus-u.p
-
-TESTS+=	xor-u.p
-
-.include <tendra.tdftest.mk>
+TEST += tdf/xor-u.p
 

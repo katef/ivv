@@ -1,5 +1,3 @@
-# $Id$
-
 .include "../../share/mk/top.mk"
 
 TEST += tdf/plus-u.p

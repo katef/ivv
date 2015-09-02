@@ -1,5 +1,3 @@
-# $Id$
-
 .include "../../share/mk/top.mk"
 
 # TODO: -Y${api} for tcc

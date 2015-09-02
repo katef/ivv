@@ -1,5 +1,3 @@
-# $Id$
-
 .include "../../share/mk/top.mk"
 
 TEST += c89-hosted/2.1.2.2p2.c

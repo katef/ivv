@@ -7,7 +7,7 @@
 #include <math.h>
 #include <stddef.h>
 
-#include "randtest.h"
+#include <stats/randtest.h>
 
 extern double pochisq(const double ax, const int df);
 

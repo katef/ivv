@@ -12,7 +12,7 @@
 
 #include <unistd.h>
 
-#include "randtest.h"
+#include <stats/randtest.h>
 
 #define FALSE 0
 #define TRUE  1

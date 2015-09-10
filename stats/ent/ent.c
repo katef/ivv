@@ -7,12 +7,8 @@
  *
  * Bit stream analysis added in September 1997.
  *
- * Terse mode output, getopt() command line processing,
- * optional stdin input, and HTML documentation added in
- * October 1998.
- *
- * Documentation for the -t (terse output) option added
- * in July 2006.
+ * getopt() command line processing, optional stdin input,
+ * and HTML documentation added in October 1998.
  *
  * Replaced table look-up for chi square to probability
  * conversion with algorithmic computation in January 2008.
@@ -104,14 +100,12 @@ main(int argc, char *argv[])
 	FILE *fp = stdin;
 
 	int fold   = FALSE, /* Fold upper to lower */
-	    binary = FALSE, /* Treat input as a bitstream */
-	    terse  = FALSE; /* Terse (CSV format) output */
+	    binary = FALSE; /* Treat input as a bitstream */
 
-	while (opt = getopt(argc, argv, "bftu?BCFTU"), opt != -1) {
+	while (opt = getopt(argc, argv, "bfu?BFU"), opt != -1) {
 		switch (tolower(opt)) {
 		case 'b': binary = TRUE; break;
 		case 'f': fold   = TRUE; break;
-		case 't': terse  = TRUE; break;
 
 		case '?':
 		case 'u':
@@ -190,44 +184,33 @@ main(int argc, char *argv[])
 	/* Complete calculation and return sequence metrics */
 	rt_end(&ent, &chisq, &mean, &montepi, &scc);
 
-	if (terse) {
-		printf("0,File-%ss,Entropy,Chi-square,Mean,Monte-Carlo-Pi,Serial-Correlation\n",
-		binary ? "bit" : "byte");
-		printf("1,%ld,%f,%f,%f,%f,%f\n",
-		totalc, ent, chisq, mean, montepi, scc);
-	}
-
 	/* Calculate probability of observed distribution occurring from
-	the results of the Chi-Square test */
-
+	 * the results of the Chi-Square test */
 	chip = pochisq(chisq, binary ? 1 : 255);
 
 	/* Print calculated results */
-	if (!terse) {
-		printf("Entropy = %f bits per %s.\n", ent, samp);
-		printf(
-			"Chi square distribution for %ld samples is %1.2f, and randomly\n",
-			totalc, chisq);
-		if (chip < 0.0001) {
-			printf("would exceed this value less than 0.01 percent of the times.\n\n");
-		} else if (chip > 0.9999) {
-			printf("would exceed this value more than than 99.99 percent of the times.\n\n");
-		} else {
-			printf("would exceed this value %1.2f percent of the times.\n\n",
-			chip * 100);
-		}
+	printf("Entropy = %f bits per %s.\n", ent, samp);
+	printf("Chi square distribution for %ld samples is %1.2f, and randomly\n",
+		totalc, chisq);
+	if (chip < 0.0001) {
+		printf("would exceed this value less than 0.01 percent of the times.\n\n");
+	} else if (chip > 0.9999) {
+		printf("would exceed this value more than than 99.99 percent of the times.\n\n");
+	} else {
+		printf("would exceed this value %1.2f percent of the times.\n\n",
+		chip * 100);
+	}
 
-		printf(
-			"Arithmetic mean value of data %ss is %1.4f (%.1f = random).\n",
-			samp, mean, binary ? 0.5 : 127.5);
-			printf("Monte Carlo value for Pi is %1.9f (error %1.2f percent).\n",
-			montepi, 100.0 * (fabs(PI - montepi) / PI));
-		printf("Serial correlation coefficient is ");
-		if (scc >= -99999) {
-			printf("%1.6f (totally uncorrelated = 0.0).\n", scc);
-		} else {
-			printf("undefined (all values equal!).\n");
-		}
+	printf(
+		"Arithmetic mean value of data %ss is %1.4f (%.1f = random).\n",
+		samp, mean, binary ? 0.5 : 127.5);
+		printf("Monte Carlo value for Pi is %1.9f (error %1.2f percent).\n",
+		montepi, 100.0 * (fabs(PI - montepi) / PI));
+	printf("Serial correlation coefficient is ");
+	if (scc >= -99999) {
+		printf("%1.6f (totally uncorrelated = 0.0).\n", scc);
+	} else {
+		printf("undefined (all values equal!).\n");
 	}
 
 	return 0;

@@ -52,8 +52,6 @@ int
 main(int argc, char *argv[])
 {
 	int oc, opt;
-	long ccount[256];	      /* Bins to count occurrences of values */
-	long totalc = 0;	      /* Total character count */
 	char *samp;
 	struct rt_stats r;
 
@@ -85,7 +83,6 @@ main(int argc, char *argv[])
 	}
 
 	samp = binary ? "bit" : "byte";
-	memset(ccount, 0, sizeof ccount);
 
 	/* Initialise for calculations */
 	rt_init(binary);
@@ -95,18 +92,6 @@ main(int argc, char *argv[])
 		unsigned char ocb;
 
 		ocb = (unsigned char) oc;
-		totalc += binary ? 8 : 1;
-		if (binary) {
-			int b;
-			unsigned char ob = ocb;
-
-			for (b = 0; b < 8; b++) {
-				ccount[ob & 1]++;
-				ob >>= 1;
-			}
-		} else {
-			ccount[ocb]++; /* Update counter for this bin */
-		}
 		rt_add(&ocb, 1);
 	}
 	fclose(fp);
@@ -116,15 +101,14 @@ main(int argc, char *argv[])
 
 	/* Print calculated results */
 	printf("Entropy = %f bits per %s.\n", r.ent, samp);
-	printf("Chi square distribution for %ld samples is %1.2f, and randomly\n",
-		totalc, r.chisq);
+	printf("Chi square distribution is %1.2f,\n", r.chisq);
+	printf("and randomly would exceed this value ");
 	if (r.chip < 0.0001) {
-		printf("would exceed this value less than 0.01 percent of the times.\n\n");
+		printf("less than 0.01 percent of the times.\n\n");
 	} else if (r.chip > 0.9999) {
-		printf("would exceed this value more than than 99.99 percent of the times.\n\n");
+		printf("more than than 99.99 percent of the times.\n\n");
 	} else {
-		printf("would exceed this value %1.2f percent of the times.\n\n",
-		r.chip * 100);
+		printf("%1.2f percent of the times.\n\n", r.chip * 100);
 	}
 
 	printf(

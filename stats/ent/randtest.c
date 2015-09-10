@@ -6,6 +6,8 @@
 
 #include <math.h>
 
+extern double pochisq(const double ax, const int df);
+
 #define FALSE 0
 #define TRUE  1
 
@@ -144,9 +146,10 @@ rt_add(void *buf, int bufl)
  * Complete calculation and return results.
  */
 void
-rt_end(double *r_ent, double *r_chisq, double *r_mean,
+rt_end(double *r_ent, double *r_chisq, double *r_chip, double *r_mean,
 	double *r_montepicalc, double *r_scc)
 {
+	double chip;
 	int i;
 
 	/*
@@ -191,8 +194,15 @@ rt_end(double *r_ent, double *r_chisq, double *r_mean,
 	 */
 	montepi = 4.0 * (((double) inmont) / mcount);
 
+	/*
+	 * Calculate probability of observed distribution occurring from
+	 * the results of the Chi-Square test
+	 */
+	chip = pochisq(chisq, binary ? 1 : 255);
+
 	*r_ent         = ent;
 	*r_chisq       = chisq;
+	*r_chip        = chip;
 	*r_mean        = datasum / totalc;
 	*r_montepicalc = montepi;
 	*r_scc         = scc;

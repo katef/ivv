@@ -37,8 +37,6 @@
 #define PI 3.14159265358979323846
 #endif
 
-extern double pochisq(const double ax, const int df);
-
 /* Print information on how to call */
 static void
 help(void)
@@ -125,11 +123,7 @@ main(int argc, char *argv[])
 	fclose(fp);
 
 	/* Complete calculation and return sequence metrics */
-	rt_end(&ent, &chisq, &mean, &montepi, &scc);
-
-	/* Calculate probability of observed distribution occurring from
-	 * the results of the Chi-Square test */
-	chip = pochisq(chisq, binary ? 1 : 255);
+	rt_end(&ent, &chisq, &chip, &mean, &montepi, &scc);
 
 	/* Print calculated results */
 	printf("Entropy = %f bits per %s.\n", ent, samp);

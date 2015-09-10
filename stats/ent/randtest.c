@@ -5,6 +5,9 @@
  */
 
 #include <math.h>
+#include <stddef.h>
+
+#include "randtest.h"
 
 extern double pochisq(const double ax, const int df);
 
@@ -146,8 +149,7 @@ rt_add(void *buf, int bufl)
  * Complete calculation and return results.
  */
 void
-rt_end(double *r_ent, double *r_chisq, double *r_chip, double *r_mean,
-	double *r_montepicalc, double *r_scc)
+rt_end(struct rt_stats *r)
 {
 	double chip;
 	int i;
@@ -200,11 +202,13 @@ rt_end(double *r_ent, double *r_chisq, double *r_chip, double *r_mean,
 	 */
 	chip = pochisq(chisq, binary ? 1 : 255);
 
-	*r_ent         = ent;
-	*r_chisq       = chisq;
-	*r_chip        = chip;
-	*r_mean        = datasum / totalc;
-	*r_montepicalc = montepi;
-	*r_scc         = scc;
+	if (r != NULL) {
+		r->ent     = ent;
+		r->chisq   = chisq;
+		r->chip    = chip;
+		r->mean    = datasum / totalc;
+		r->montepi = montepi;
+		r->scc     = scc;
+	}
 }
 

@@ -60,8 +60,8 @@ main(int argc, char *argv[])
 	long ccount[256];	      /* Bins to count occurrences of values */
 	long totalc = 0;	      /* Total character count */
 	char *samp;
+	struct rt_stats r;
 
-	double montepi, chip, scc, ent, mean, chisq;
 	FILE *fp = stdin;
 
 	int fold   = FALSE, /* Fold upper to lower */
@@ -123,29 +123,29 @@ main(int argc, char *argv[])
 	fclose(fp);
 
 	/* Complete calculation and return sequence metrics */
-	rt_end(&ent, &chisq, &chip, &mean, &montepi, &scc);
+	rt_end(&r);
 
 	/* Print calculated results */
-	printf("Entropy = %f bits per %s.\n", ent, samp);
+	printf("Entropy = %f bits per %s.\n", r.ent, samp);
 	printf("Chi square distribution for %ld samples is %1.2f, and randomly\n",
-		totalc, chisq);
-	if (chip < 0.0001) {
+		totalc, r.chisq);
+	if (r.chip < 0.0001) {
 		printf("would exceed this value less than 0.01 percent of the times.\n\n");
-	} else if (chip > 0.9999) {
+	} else if (r.chip > 0.9999) {
 		printf("would exceed this value more than than 99.99 percent of the times.\n\n");
 	} else {
 		printf("would exceed this value %1.2f percent of the times.\n\n",
-		chip * 100);
+		r.chip * 100);
 	}
 
 	printf(
 		"Arithmetic mean value of data %ss is %1.4f (%.1f = random).\n",
-		samp, mean, binary ? 0.5 : 127.5);
+		samp, r.mean, binary ? 0.5 : 127.5);
 		printf("Monte Carlo value for Pi is %1.9f (error %1.2f percent).\n",
-		montepi, 100.0 * (fabs(PI - montepi) / PI));
+		r.montepi, 100.0 * (fabs(PI - r.montepi) / PI));
 	printf("Serial correlation coefficient is ");
-	if (scc >= -99999) {
-		printf("%1.6f (totally uncorrelated = 0.0).\n", scc);
+	if (r.scc >= -99999) {
+		printf("%1.6f (totally uncorrelated = 0.0).\n", r.scc);
 	} else {
 		printf("undefined (all values equal!).\n");
 	}

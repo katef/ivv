@@ -21,12 +21,8 @@
 #include <string.h>
 #include <ctype.h>
 #include <math.h>
-#ifdef _WIN32
-#include <fcntl.h>
-#include <io.h>
-#else
+
 #include <unistd.h>
-#endif
 
 #include "randtest.h"
 
@@ -58,35 +54,6 @@ help(void)
 	printf("\n   http://www.fourmilab.ch/");
 	printf("\n   %s\n", UPDATE);
 }
-
-/* GETOPT -- Dumb version of getopt for brain-dead Windows. */
-#ifdef _WIN32
-static int optind = 1;
-
-static int getopt(int argc, char *argv[], char *opts)
-{
-    static char *opp = NULL;
-    int o;
-
-    while (opp == NULL) {
-		if ((optind >= argc) || (*argv[optind] != '-')) {
-			return -1;
-		}
-		opp = argv[optind] + 1;
-		optind++;
-		if (*opp == 0) {
-			opp = NULL;
-		}
-    }
-
-    o = *opp++;
-    if (*opp == 0) {
-		opp = NULL;
-    }
-
-    return strchr(opts, o) == NULL ? '?' : o;
-}
-#endif
 
 int
 main(int argc, char *argv[])
@@ -125,30 +92,6 @@ main(int argc, char *argv[])
 			return 2;
 		}
 	}
-
-#ifdef _WIN32
-
-	/*
-	 * Warning! On systems which distinguish text mode and
-	 * binary I/O (MS-DOS, Macintosh, etc.) the modes in the open
-	 * statement for "fp" should have forced the input file into
-	 * binary mode.  But what if we're reading from standard
-	 * input?  Well, then we need to do a system-specific tweak
-	 * to make sure it's in binary mode.  While we're at it,
-	 * let's set the mode to binary regardless of however fopen
-	 * set it.
-	 *
-	 * The following code, conditional on _WIN32, sets binary
-	 * mode using the method prescribed by Microsoft Visual C 7.0
-	 * ("Monkey C"); this may require modification if you're
-	 * using a different compiler or release of Monkey C.	If
-	 * you're porting this code to a different system which
-	 * distinguishes text and binary files, you'll need to add
-	 * the equivalent call for that system.
-	 */
-
-	_setmode(_fileno(fp), _O_BINARY);
-#endif
 
 	samp = binary ? "bit" : "byte";
 	memset(ccount, 0, sizeof ccount);

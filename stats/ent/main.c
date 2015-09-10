@@ -1,20 +1,9 @@
 /*
  * Entropy calculation and analysis of putative random sequences.
  *
- * Designed and implemented by John "Random" Walker in May 1985.
- *
- * Multiple analyses of random sequences added in December 1985.
- *
- * Bit stream analysis added in September 1997.
- *
- * getopt() command line processing
- * and HTML documentation added in October 1998.
- *
- * Replaced table look-up for chi square to probability
- * conversion with algorithmic computation in January 2008.
- *
- * For additional information and the latest version,
- * see http://www.fourmilab.ch/random/
+ * Adapted from ent(1), designed and implemented
+ * by John "Random" Walker in May 1985.
+ * See http://www.fourmilab.ch/random/
  */
 
 #include <stdio.h>
@@ -25,8 +14,6 @@
 
 #include "randtest.h"
 
-#define UPDATE "January 28th, 2008"
-
 #define FALSE 0
 #define TRUE  1
 
@@ -34,18 +21,15 @@
 #define M_PI 3.14159265358979323846
 #endif
 
-/* Print information on how to call */
 static void
-help(void)
+usage(void)
 {
-	printf("ent --  Calculate entropy of file.  Call");
-	printf("\n        with ent [options] [input-file]");
+	printf("usage: ent [-bu]\n");
 	printf("\n");
-	printf("\n        Options:   -b   Treat input as a stream of bits");
-	printf("\n                   -u   Print this message\n");
-	printf("\nBy John Walker");
-	printf("\n   http://www.fourmilab.ch/");
-	printf("\n   %s\n", UPDATE);
+	printf("  -b   Treat input as a stream of bits\n");
+	printf("  -u   Print this message\n");
+	printf("\n");
+	printf("http://www.fourmilab.ch/\n");
 }
 
 int
@@ -64,7 +48,7 @@ main(int argc, char *argv[])
 
 			case '?':
 			case 'u':
-				help();
+				usage();
 				return 0;
 			}
 		}
@@ -73,7 +57,7 @@ main(int argc, char *argv[])
 		argv += optind;
 
 		if (argc != 0) {
-			help();
+			usage();
 			return 2;
 		}
 	}

@@ -19,7 +19,6 @@
 
 #include <stdio.h>
 #include <string.h>
-#include <ctype.h>
 #include <math.h>
 
 #include <unistd.h>
@@ -43,8 +42,6 @@ help(void)
 	printf("\n        with ent [options] [input-file]");
 	printf("\n");
 	printf("\n        Options:   -b   Treat input as a stream of bits");
-	printf("\n                   -f   Fold upper to lower case letters");
-	printf("\n                   -t   Terse output in CSV format");
 	printf("\n                   -u   Print this message\n");
 	printf("\nBy John Walker");
 	printf("\n   http://www.fourmilab.ch/");
@@ -62,13 +59,11 @@ main(int argc, char *argv[])
 
 	FILE *fp = stdin;
 
-	int fold   = FALSE, /* Fold upper to lower */
-	    binary = FALSE; /* Treat input as a bitstream */
+	int binary = FALSE; /* Treat input as a bitstream */
 
-	while (opt = getopt(argc, argv, "bfu?BFU"), opt != -1) {
-		switch (tolower(opt)) {
+	while (opt = getopt(argc, argv, "bu?"), opt != -1) {
+		switch (opt) {
 		case 'b': binary = TRUE; break;
-		case 'f': fold   = TRUE; break;
 
 		case '?':
 		case 'u':
@@ -98,10 +93,6 @@ main(int argc, char *argv[])
 	/* Scan input file and count character occurrences */
 	while (oc = fgetc(fp), oc != EOF) {
 		unsigned char ocb;
-
-		if (fold && isalpha(oc) && isupper(oc)) {
-			oc = tolower(oc);
-		}
 
 		ocb = (unsigned char) oc;
 		totalc += binary ? 8 : 1;

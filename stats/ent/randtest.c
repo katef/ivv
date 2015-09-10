@@ -149,8 +149,9 @@ rt_end(double *r_ent, double *r_chisq, double *r_mean,
 {
 	int i;
 
-	/* Complete calculation of serial correlation coefficient */
-
+	/*
+	 * Complete calculation of serial correlation coefficient
+	 */
 	scct1 = scct1 + scclast * sccu0;
 	scct2 = scct2 * scct2;
 	scc = totalc * scct3 - scct2;
@@ -166,9 +167,8 @@ rt_end(double *r_ent, double *r_chisq, double *r_mean,
  	 * in the entropy calculation below.  While we're at it,
 	 * we sum of all the data which will be used to compute the mean.
 	 */
-
 	cexp = totalc / (binary ? 2.0 : 256.0); /* Expected count per bin */
-	for (i = 0; i < (binary ? 2 : 256); i++) {
+	for (i = 0; i < (binary ? 2   : 256); i++) {
 		double a = ccount[i] - cexp;;
 
 		prob[i] = ((double) ccount[i]) / totalc;
@@ -176,16 +176,19 @@ rt_end(double *r_ent, double *r_chisq, double *r_mean,
 		datasum += ((double) i) * ccount[i];
 	}
 
-	/* Calculate entropy */
+	/*
+	 * Calculate entropy
+	 */
 	for (i = 0; i < (binary ? 2 : 256); i++) {
 		if (prob[i] > 0.0) {
 			ent += prob[i] * rt_log2(1 / prob[i]);
 		}
 	}
 
-	/* Calculate Monte Carlo value for PI from percentage of hits
-	 * within the circle */
-
+	/*
+	 * Calculate Monte Carlo value for PI from percentage of hits
+	 * within the circle
+	 */
 	montepi = 4.0 * (((double) inmont) / mcount);
 
 	*r_ent         = ent;

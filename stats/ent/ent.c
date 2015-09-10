@@ -31,10 +31,8 @@
 #define FALSE 0
 #define TRUE  1
 
-#ifdef M_PI
-#define PI M_PI
-#else
-#define PI 3.14159265358979323846
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
 #endif
 
 /* Print information on how to call */
@@ -142,7 +140,7 @@ main(int argc, char *argv[])
 		"Arithmetic mean value of data %ss is %1.4f (%.1f = random).\n",
 		samp, r.mean, binary ? 0.5 : 127.5);
 		printf("Monte Carlo value for Pi is %1.9f (error %1.2f percent).\n",
-		r.montepi, 100.0 * (fabs(PI - r.montepi) / PI));
+		r.montepi, 100.0 * (fabs(M_PI - r.montepi) / M_PI));
 	printf("Serial correlation coefficient is ");
 	if (r.scc >= -99999) {
 		printf("%1.6f (totally uncorrelated = 0.0).\n", r.scc);

@@ -205,10 +205,6 @@ main(int argc, char *argv[])
 	/* Print calculated results */
 	if (!terse) {
 		printf("Entropy = %f bits per %s.\n", ent, samp);
-		printf("\nOptimum compression would reduce the size\n");
-		printf("of this %ld %s file by %d percent.\n\n", totalc, samp,
-			(short) ((100 * ((binary ? 1 : 8) - ent) /
-			(binary ? 1.0 : 8.0))));
 		printf(
 			"Chi square distribution for %ld samples is %1.2f, and randomly\n",
 			totalc, chisq);

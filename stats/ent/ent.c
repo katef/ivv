@@ -32,7 +32,6 @@
 #include <unistd.h>
 #endif
 
-#include "iso8859.h"
 #include "randtest.h"
 
 #define UPDATE "January 28th, 2008"
@@ -111,7 +110,7 @@ main(int argc, char *argv[])
 	    terse  = FALSE; /* Terse (CSV format) output */
 
 	while (opt = getopt(argc, argv, "bcftu?BCFTU"), opt != -1) {
-		switch (toISOlower(opt)) {
+		switch (tolower(opt)) {
 		case 'b': binary = TRUE; break;
 		case 'c': counts = TRUE; break;
 		case 'f': fold   = TRUE; break;
@@ -170,8 +169,8 @@ main(int argc, char *argv[])
 	while (oc = fgetc(fp), oc != EOF) {
 		unsigned char ocb;
 
-		if (fold && isISOalpha(oc) && isISOupper(oc)) {
-			oc = toISOlower(oc);
+		if (fold && isalpha(oc) && isupper(oc)) {
+			oc = tolower(oc);
 		}
 
 		ocb = (unsigned char) oc;
@@ -227,17 +226,11 @@ main(int argc, char *argv[])
 			}
 
 			/*
-			 * The following expression shows ISO 8859-1
-			 * Latin1 characters and blanks out other codes.
-			 * The test for ISO space replaces the ISO
-			 * non-blanking space (0xA0) with a regular
-			 * ASCII space, guaranteeing it's rendered
-			 * properly even when the font doesn't contain
-			 * that character, which is the case with many
-			 * X fonts.
+			 * The following expression shows printable
+			 * characters and blanks out other codes.
 			 */
 			printf("%3d   %c   %10ld   %f\n", i,
-				(!isISOprint(i) || isISOspace(i)) ? ' ' : i,
+				(!isprint(i) || isspace(i)) ? ' ' : i,
 				ccount[i], ((double) ccount[i] / totalc));
 		}
 

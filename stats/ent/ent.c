@@ -55,7 +55,6 @@ help(void)
 	printf("\n        with ent [options] [input-file]");
 	printf("\n");
 	printf("\n        Options:   -b   Treat input as a stream of bits");
-	printf("\n                   -c   Print occurrence counts");
 	printf("\n                   -f   Fold upper to lower case letters");
 	printf("\n                   -t   Terse output in CSV format");
 	printf("\n                   -u   Print this message\n");
@@ -96,7 +95,7 @@ static int getopt(int argc, char *argv[], char *opts)
 int
 main(int argc, char *argv[])
 {
-	int i, oc, opt;
+	int oc, opt;
 	long ccount[256];	      /* Bins to count occurrences of values */
 	long totalc = 0;	      /* Total character count */
 	char *samp;
@@ -104,15 +103,13 @@ main(int argc, char *argv[])
 	double montepi, chip, scc, ent, mean, chisq;
 	FILE *fp = stdin;
 
-	int counts = FALSE, /* Print character counts */
-	    fold   = FALSE, /* Fold upper to lower */
+	int fold   = FALSE, /* Fold upper to lower */
 	    binary = FALSE, /* Treat input as a bitstream */
 	    terse  = FALSE; /* Terse (CSV format) output */
 
-	while (opt = getopt(argc, argv, "bcftu?BCFTU"), opt != -1) {
+	while (opt = getopt(argc, argv, "bftu?BCFTU"), opt != -1) {
 		switch (tolower(opt)) {
 		case 'b': binary = TRUE; break;
-		case 'c': counts = TRUE; break;
 		case 'f': fold   = TRUE; break;
 		case 't': terse  = TRUE; break;
 
@@ -204,40 +201,6 @@ main(int argc, char *argv[])
 	the results of the Chi-Square test */
 
 	chip = pochisq(chisq, binary ? 1 : 255);
-
-	/* Print bin counts if requested */
-
-	if (counts) {
-		if (terse) {
-			printf("2,Value,Occurrences,Fraction\n");
-		} else {
-			printf("Value Char Occurrences Fraction\n");
-		}
-
-		for (i = 0; i < (binary ? 2 : 256); i++) {
-			if (terse) {
-				printf("3,%d,%ld,%f\n", i,
-				ccount[i], ((double) ccount[i] / totalc));
-				continue;
-			}
-
-			if (ccount[i] <= 0) {
-				continue;
-			}
-
-			/*
-			 * The following expression shows printable
-			 * characters and blanks out other codes.
-			 */
-			printf("%3d   %c   %10ld   %f\n", i,
-				(!isprint(i) || isspace(i)) ? ' ' : i,
-				ccount[i], ((double) ccount[i] / totalc));
-		}
-
-		if (!terse) {
-			printf("\nTotal:    %10ld   %f\n\n", totalc, 1.0);
-		}
-	}
 
 	/* Print calculated results */
 	if (!terse) {

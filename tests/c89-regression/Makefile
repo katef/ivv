@@ -3,4 +3,5 @@
 .include "../../share/mk/top.mk"
 
 TEST += c89-regression/4.8p3-array.c
+#TEST += c89-regression/4.10.2.1-ent.c
 

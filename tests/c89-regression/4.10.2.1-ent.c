@@ -164,14 +164,14 @@ main(int argc, char *argv[])
 		 * <pestle> kate, the standard error there should be sqrt(p*(1-p)/n),
 		 * where p = (area of circle)/(area of square) */
 
-		printf("%s 5 - Chi square distribution\n"
+		printf("%s 5 - Chi square distribution # TODO\n"
 			"\tgexpected chisq < %.2f\n"
 			"\tgot chisq = %.2f\n",
 			r.chisq < expected.chisq ? "ok" : "not ok",
 			expected.chisq,
 			r.chisq);
 
-		printf("%s 6 - Chi square probability\n"
+		printf("%s 6 - Chi square probability # TODO\n"
 			"\tgexpected chip < %.2f%%\n"
 			"\tgot chip = %.2f%%\n",
 			r.chip < expected.chip ? "ok" : "not ok",

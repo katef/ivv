@@ -10,123 +10,10 @@
 
 #include <dlfcn.h>
 
-static void
-escputc(int c, FILE *f)
-{
-	size_t i;
+#include <rand/rand.h>
+#include <rand/fuzz.h>
 
-	struct {
-		int in;
-		const char *out;
-	} esc[] = {
-		{ '\"', "\\\"" },
-		{ '\'', "\\\'" },
-		{ '\\', "\\\\" },
-		{ '\f', "\\f"  },
-		{ '\n', "\\n"  },
-		{ '\r', "\\r"  },
-		{ '\t', "\\t"  },
-		{ '\v', "\\v"  }
-	};
-
-	assert(f != NULL);
-
-	for (i = 0; i < sizeof esc / sizeof *esc; i++) {
-		if (esc[i].in == c) {
-			fputs(esc[i].out, f);
-			return;
-		}
-	}
-
-	if (!isprint(c)) {
-		fprintf(f, "\\x%x", (unsigned char) c);
-		return;
-	}
-
-	putc(c, f);
-}
-
-static void
-escputs(const char *s, FILE *f)
-{
-	const char *p;
-
-	for (p = s; *p != '\0'; p++) {
-		escputc(*p, f);
-	}
-}
-
-/*
- * Returns in the interval [min, max]
- * adapted from http://stackoverflow.com/questions/2509679/how-to-generate-a-random-number-from-within-a-range
- */
-unsigned int
-rand_interval(unsigned int min, unsigned int max)
-{
-	unsigned range;
-	unsigned buckets;
-	unsigned limit;
-	int r;
-
-	assert(max >= min);
-	assert(1 + max - min <= RAND_MAX);
-
-	/*
-	 * Create equal size buckets all in a row, then fire randomly towards
-	 * the buckets until you land in one of them. All buckets are equally
-	 * likely. If you land off the end of the line of buckets, try again.
-	 */
-
-	range   = 1 + max - min;
-	buckets = RAND_MAX / range;
-	limit   = buckets  * range;
-
-	do {
-		r = rand();
-	} while (r >= limit);
-
-	return min + r / buckets; /* truncates intentionally */
-}
-
-static char
-randchar(const char *set)
-{
-	assert(set != NULL);
-
-	return set[rand_interval(0, strlen(set))];
-}
-
-static char
-randcchar(const char *set)
-{
-	int c;
-
-	assert(set != NULL);
-
-	do {
-		c = rand_interval(0, UCHAR_MAX);
-	} while (c != '\0' && strchr(set, c));
-
-	return c;
-}
-
-static void
-randstr(char *buf, size_t maxlen,
-	char (*c)(const char *), const char *set)
-{
-	size_t i, l;
-
-	assert(c != NULL);
-	assert(set != NULL);
-
-	l = rand_interval(0, maxlen);
-
-	for (i = 0; i < l; i++) {
-		buf[i] = c(set);
-	}
-
-	buf[i] = '\0';
-}
+#include <tap/esc.h>
 
 int main(int argc, char *argv[]) {
 	/*
@@ -167,7 +54,7 @@ int main(int argc, char *argv[]) {
 	 * S4.10.1.5p1 "... an initial, possibly empty,
 	 * sequence of white-space characters ..."
 	 */
-	randstr(white, sizeof white, randchar, " \f\n\r\t\v");
+	fuzzstr(white, sizeof white, fuzzchar, " \f\n\r\t\v");
 
 	/*
 	 * S4.10.1.5p1 "... (as specified by the isspace function)"
@@ -183,7 +70,7 @@ int main(int argc, char *argv[]) {
 	/*
 	 * S4.10.1.5p2 "... optionally preceded by a plus or minus sign ..."
 	 */
-	randstr(sign, sizeof sign, randchar, "+-");
+	fuzzstr(sign, sizeof sign, fuzzchar, "+-");
 
 	/*
 	 * S4.10.1.5p1 "... a subject sequence resembling an unsigned integer
@@ -199,7 +86,7 @@ int main(int argc, char *argv[]) {
 		base = rand_interval(1, sizeof digit);
 		digit[base] = '\0';
 
-		randstr(num, sizeof num, randchar, digit);
+		fuzzstr(num, sizeof num, fuzzchar, digit);
 	}
 
 	/*
@@ -209,7 +96,7 @@ int main(int argc, char *argv[]) {
 	 */
 	/* An unrecognised character is something which is not
 	 * a digit for the given base (or '\0') */
-	randstr(tail, sizeof tail, randcchar, digit);
+	fuzzstr(tail, sizeof tail, fuzzcchar, digit);
 
 	sprintf(buf, "%s%s%s%s", white, sign, num, tail);
 

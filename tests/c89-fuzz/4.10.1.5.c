@@ -276,11 +276,16 @@ int main(int argc, char *argv[]) {
 				&& ref.e == dut.e
 				&& ref.err == dut.err;
 
-			printf("%s %u - strtol buf = \"",
-				status ? "ok" : "not ok", (unsigned int) seed);
+			printf("%s %u - strtol fuzz $SEED=%d\n",
+				status ? "ok" : "not ok", (unsigned int) seed, seed);
+
+			printf("\tinput    buf   = \"");
 			escputs(buf, stdout);
-			printf("\", end = %s, base = %d\n",
-				end ? "&e" : "NULL", base);
+			printf("\"\n");
+
+			printf("\tinput    end   = %s\n", end ? "&e" : "NULL", base);
+
+			printf("\tinput    base  = %d\n", base);
 
 			printf("\texpected l     = %ld\n", ref.l);
 			if (ref.e == NULL) {

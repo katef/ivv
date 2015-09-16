@@ -142,13 +142,30 @@ int main(int argc, char *argv[]) {
 	char num[256];
 	char tail[16];
 	int base;
+	int seed;
 
 	static const char alnum[] = "0123456789" "abcdefghijklmnopqrstuvwxyz";
 	char digit[sizeof alnum];
 
 	char buf[sizeof white + sizeof sign + sizeof num + sizeof tail + 1];
 
-	srand(SEED);
+	{
+		const char *s;
+
+		s = getenv("SEED");
+		if (s == NULL) {
+			seed = 1;
+		} else {
+			seed = atoi(s);
+		}
+
+		if (seed == 0) {
+			fprintf(stderr, "invalid seed: %s\n", s);
+			return 1;
+		}
+
+		srand(seed);
+	}
 
 	/*
 	 * S4.10.1.5p1 "... an initial, possibly empty,
@@ -260,7 +277,7 @@ int main(int argc, char *argv[]) {
 				&& ref.err == dut.err;
 
 			printf("%s %u - strtol buf = \"",
-				status ? "ok" : "not ok", 1U);
+				status ? "ok" : "not ok", (unsigned int) seed);
 			escputs(buf, stdout);
 			printf("\", end = %s, base = %d\n",
 				end ? "&e" : "NULL", base);

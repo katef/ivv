@@ -14,6 +14,52 @@
 #define SEED 0
 #endif
 
+static void
+escputc(int c, FILE *f)
+{
+	size_t i;
+
+	struct {
+		int in;
+		const char *out;
+	} esc[] = {
+		{ '\"', "\\\"" },
+		{ '\'', "\\\'" },
+		{ '\\', "\\\\" },
+		{ '\f', "\\f"  },
+		{ '\n', "\\n"  },
+		{ '\r', "\\r"  },
+		{ '\t', "\\t"  },
+		{ '\v', "\\v"  }
+	};
+
+	assert(f != NULL);
+
+	for (i = 0; i < sizeof esc / sizeof *esc; i++) {
+		if (esc[i].in == c) {
+			fputs(esc[i].out, f);
+			return;
+		}
+	}
+
+	if (!isprint(c)) {
+		fprintf(f, "\\x%x", (unsigned char) c);
+		return;
+	}
+
+	putc(c, f);
+}
+
+static void
+escputs(const char *s, FILE *f)
+{
+	const char *p;
+
+	for (p = s; *p != '\0'; p++) {
+		escputc(*p, f);
+	}
+}
+
 /*
  * Returns in the interval [min, max]
  * adapted from http://stackoverflow.com/questions/2509679/how-to-generate-a-random-number-from-within-a-range
@@ -206,9 +252,39 @@ int main(int argc, char *argv[]) {
 		dut.l = dut.strtol(buf, end ? &dut.e : NULL, base);
 		dut.err = errno;
 
-		assert(ref.l == dut.l);
-		assert(ref.e == dut.e);
-		assert(ref.err == dut.err);
+		{
+			int status;
+
+			status = ref.l == dut.l
+				&& ref.e == dut.e
+				&& ref.err == dut.err;
+
+			printf("%s %u - strtol buf = \"",
+				status ? "ok" : "not ok", 1U);
+			escputs(buf, stdout);
+			printf("\", end = %s, base = %d\n",
+				end ? "&e" : "NULL", base);
+
+			printf("\texpected l     = %ld\n", ref.l);
+			if (ref.e == NULL) {
+				printf("\texpected end   = NULL\n");
+			} else {
+				printf("\texpected end   = \"");
+				escputs(ref.e, stdout);
+				printf("\"\n");
+			}
+			printf("\texpected errno = %d (%s)\n", ref.err, strerror(ref.err));
+
+			printf("\tgot      l     = %ld\n", dut.l);
+			if (dut.e == NULL) {
+				printf("\tgot      end   = NULL\n");
+			} else {
+				printf("\tgot      end   = \"");
+				escputs(dut.e, stdout);
+				printf("\"\n");
+			}
+			printf("\tgot      errno = %d (%s)\n", dut.err, strerror(ref.err));
+		}
 
 		dlclose(ref.h);
 		dlclose(dut.h);

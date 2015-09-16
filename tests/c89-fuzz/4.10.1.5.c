@@ -10,10 +10,6 @@
 
 #include <dlfcn.h>
 
-#ifndef SEED
-#define SEED 0
-#endif
-
 static void
 escputc(int c, FILE *f)
 {

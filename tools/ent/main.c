@@ -1,4 +1,10 @@
 /*
+ * Copyright 2012-2017 Katherine Flavel
+ *
+ * See LICENCE for the full copyright terms.
+ */
+
+/*
  * Entropy calculation and analysis of putative random sequences.
  *
  * Adapted from ent(1), designed and implemented

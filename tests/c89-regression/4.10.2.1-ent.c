@@ -1,3 +1,9 @@
+/*
+ * Copyright 2012-2017 Katherine Flavel
+ *
+ * See LICENCE for the full copyright terms.
+ */
+
 #define _XOPEN_SOURCE 600
 
 #include <assert.h>

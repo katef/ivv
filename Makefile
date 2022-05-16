@@ -13,6 +13,13 @@ CC     ?= cc
 BUILD  ?= build
 PREFIX ?= /usr/local
 
+# ${unix} is an arbitrary variable set by sys.mk
+.if defined(unix)
+.BEGIN::
+	@echo "We don't use sys.mk; run ${MAKE} with -r" >&2
+	@false
+.endif
+
 # layout
 SUBDIR += tests/c89-common
 SUBDIR += tests/c89-hosted
